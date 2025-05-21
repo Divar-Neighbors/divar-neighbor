@@ -3,7 +3,6 @@ from rest_framework.response import Response
 from .models import ServiceProvider, ServiceRequest, Match
 from .serializers import ServiceProviderSerializer, ServiceRequestSerializer, MatchSerializer
 from geopy.distance import geodesic
-import requests
 
 @api_view(['POST'])
 def register_provider(request):
@@ -18,7 +17,6 @@ def request_service(request):
     serializer = ServiceRequestSerializer(data=request.data)
     if serializer.is_valid():
         service_request = serializer.save()
-        # جستجو برای تطبیق
         providers = ServiceProvider.objects.filter(category=service_request.category, city=service_request.city)
         for p in providers:
             distance = geodesic((p.lat, p.lng), (service_request.lat, service_request.lng)).km
@@ -28,28 +26,19 @@ def request_service(request):
         return Response({"message": "در این منطقه کسی یافت نشد"})
     return Response(serializer.errors, status=400)
 
-
-
-
-
-def create_addon():
-    token = "AadMzx0b"
-    url = f"https://api.divar.ir/v2/open-platform/addons/post/{token}"
-    headers = {
-        "x-api-key": "your_actual_api_key_here",
-        "Content-Type": "application/json"
-    }
-    payload = {
+# شبیه‌سازی ثبت افزونه در آگهی دیوار بدون اتصال واقعی
+@api_view(['POST'])
+def simulate_addon_to_post(request):
+    post_token = request.data.get("post_token")
+    data = {
         "title": "ثبت موقعیت تعمیرکار",
-        "description": "لطفاً موقعیت مکانی خود را برای دریافت درخواست ثبت کنید.",
-        "city": "تهران",
-        "district": "تجریش",
+        "description": "شبیه‌سازی افزونه دیوار برای آگهی",
+        "city": request.data.get("city", "تهران"),
+        "district": request.data.get("district", "تجریش"),
         "location": {
-            "lat": 35.81417,
-            "lng": 51.42528
+            "lat": request.data.get("lat", 35.81417),
+            "lng": request.data.get("lng", 51.42528)
         },
-        "category": "تعمیر کولر گازی"
+        "category": request.data.get("category", "تعمیر کولر گازی")
     }
-
-    response = requests.post(url, headers=headers, json=payload)
-    return response.status_code, response.json()
+    return Response({"message": "افزونه با موفقیت (شبیه‌سازی) ثبت شد", "post_token": post_token, "addon_data": data})
