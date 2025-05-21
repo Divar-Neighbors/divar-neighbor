@@ -42,3 +42,7 @@ def simulate_addon_to_post(request):
         "category": request.data.get("category", "تعمیر کولر گازی")
     }
     return Response({"message": "افزونه با موفقیت (شبیه‌سازی) ثبت شد", "post_token": post_token, "addon_data": data})
+
+
+def register_provider():
+    return None

@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>چت و اعلان - همیار محله</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      background-color: #f9f9f9;
+      direction: rtl;
+      margin: 40px auto;
+      width: 95%;
+      max-width: 600px;
+    }
+    h2 {
+      color: #333;
+    }
+    .form-group {
+      margin-bottom: 10px;
+    }
+    input[type="text"], input[type="checkbox"] {
+      width: 100%;
+      padding: 8px;
+      margin-top: 5px;
+      margin-bottom: 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      box-sizing: border-box;
+    }
+    .chat-box {
+      background-color: white;
+      border: 1px solid #ccc;
+      padding: 10px;
+      max-height: 250px;
+      overflow-y: scroll;
+      margin-bottom: 20px;
+    }
+    .my-msg {
+      text-align: right;
+      color: #4a6bff;
+      margin-bottom: 10px;
+    }
+    .other-msg {
+      text-align: left;
+      color: #333;
+      margin-bottom: 10px;
+    }
+    .notify-message {
+      background-color: #eaf0ff;
+      padding: 10px;
+      border-left: 4px solid #4a6bff;
+      border-radius: 5px;
+      margin-top: 10px;
+      font-size: 0.9rem;
+    }
+    button {
+      background-color: #4a6bff;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <h2>چت بین مشتری و سرویس‌دهنده</h2>
+
+  <div class="form-group">
+    <label>نام شما:</label>
+    <input type="text" id="sender" placeholder="مثلاً: علی">
+  </div>
+  <div class="form-group">
+    <label>نام طرف مقابل:</label>
+    <input type="text" id="receiver" placeholder="مثلاً: نسرین">
+  </div>
+
+  <div class="chat-box" id="chat-box">
+    <!-- پیام‌ها اینجا نمایش داده می‌شوند -->
+  </div>
+
+  <form onsubmit="sendMessage(event)">
+    <input type="text" id="message" placeholder="پیام خود را بنویسید...">
+    <button type="submit">ارسال</button>
+  </form>
+
+  <div class="form-group">
+    <label><input type="checkbox" id="notify" onchange="toggleNotify()"> خبرم کن وقتی پیام جدید آمد</label>
+    <div id="notify-message" class="notify-message" style="display:none;"></div>
+  </div>
+
+  <script>
+    async function sendMessage(e) {
+      e.preventDefault();
+      const sender = document.getElementById('sender').value;
+      const receiver = document.getElementById('receiver').value;
+      const text = document.getElementById('message').value;
+      if (!text || !sender || !receiver) return;
+
+      const response = await fetch('http://127.0.0.1:8000/api/send-message/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ sender, receiver, text })
+      });
+      const result = await response.json();
+      document.getElementById('message').value = '';
+      fetchMessages();
+    }
+
+    async function fetchMessages() {
+      const sender = document.getElementById('sender').value;
+      const receiver = document.getElementById('receiver').value;
+      if (!sender || !receiver) return;
+
+      const res = await fetch(`http://127.0.0.1:8000/api/get-messages/?sender=${sender}&receiver=${receiver}`);
+      const messages = await res.json();
+      const chatBox = document.getElementById('chat-box');
+      chatBox.innerHTML = '';
+      for (let msg of messages) {
+        const div = document.createElement('div');
+        div.className = msg.sender === sender ? 'my-msg' : 'other-msg';
+        div.textContent = `${msg.sender}: ${msg.text}`;
+        chatBox.appendChild(div);
+      }
+    }
+
+    function toggleNotify() {
+      const checked = document.getElementById('notify').checked;
+      const box = document.getElementById('notify-message');
+      box.style.display = checked ? 'block' : 'none';
+      box.textContent = checked ? 'در صورت دریافت پیام جدید به شما اطلاع داده می‌شود.' : '';
+    }
+
+    document.getElementById('sender').addEventListener('change', fetchMessages);
+    document.getElementById('receiver').addEventListener('change', fetchMessages);
+  </script>
+</body>
+</html>

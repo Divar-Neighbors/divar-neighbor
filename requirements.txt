@@ -1,3 +1,11 @@
+Django==5.2.1
+djangorestframework==3.16.0
+geographiclib==2.0
+geopy==2.4.1
+requests==2.32.3
+
+
+
 asgiref==3.8.1
 Django==5.2.1
 setuptools==59.6.0
