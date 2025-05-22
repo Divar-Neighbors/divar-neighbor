@@ -12,6 +12,8 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 import os
 from pathlib import Path
 
+from kenar import ClientConfig
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -127,3 +129,11 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'static/media')
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+KENAR_CLIENT_CONFIG = ClientConfig(
+    app_slug = ('eb20cb2e-3650-11f0-8be3-12d73c7dbe6b'),
+    api_key = ('eyJhbGciOiJSUzI1NiIsImtpZCI6InByaXZhdGVfa2V5XzIiLCJ0eXAiOiJKV1QifQ.eyJhcHBfc2x1ZyI6InNoYXJwLXBvbGxlbi10b25ndWUiLCJhdWQiOiJzZXJ2aWNlcHJvdmlkZXJzIiwiZXhwIjoxNzUyODc2MjE1LCJqdGkiOiIxYzg1NTZiMC0zNGZkLTExZjAtOGJlMy0xMmQ3M2M3ZGJlNmIiLCJpYXQiOjE3NDc2OTIyMTUsImlzcyI6ImRpdmFyIiwic3ViIjoiYXBpa2V5In0.h3Rv6gRzjMl3blGgHOdk-K5Zds9-DcrMjIu8992EhaZaU_jmR2anWQL__Sh8aEbhQoNv_wrZcNmyhtYa_4k4vkqGZiOyr_stvwDD2V53UQ1qjexGIHhkZOIN8tAK0RReT7veqVaUmLSjG9NX-ziXyZWUMon3ZXjDohnr7GHZL3arLmoXbuy-PKrXvNtw-TAgS__ZB9Qq3t8SkdqqKVC0s9Uv-Fp-y0OW0QwRbOPGbtAgY01il0MxSSx1att0T3wscF71JuIZEVNqdxDG53AHLNRYjvWxsvZ9Uwpgv1LUel2NdvBHCmEfAwXdtc2z6hocTIzeg4GX4f26VeZMLCeSSg'),
+    oauth_secret =('163291bb061304b667f2482c4e7beee78a9a92e76ff8eaaf9767ef5daecbf876426067f1b691f2a7d39884e1887442a393b3de321b2ab888b77dbd9b58733ede'),
+    oauth_redirect_url= 'https://18e4-82-115-24-48.ngrok-free.app/oauth/callback/'
+
+)

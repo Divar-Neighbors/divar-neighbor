@@ -1,3 +1,4 @@
+from django.conf import Settings
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from django.shortcuts import redirect
@@ -5,15 +6,12 @@ from django.http import HttpResponse
 from .models import ServiceProvider, ServiceRequest, Match
 from .serializers import ServiceProviderSerializer, ServiceRequestSerializer, MatchSerializer
 from geopy.distance import geodesic
-from kenar import KenarOAuthClient
+import kenar
+from django.conf import settings
 import requests
 
 # پیکربندی client دیوار
-client = KenarOAuthClient(
-    client_id="YOUR_CLIENT_ID",
-    client_secret="YOUR_CLIENT_SECRET",
-    redirect_uri="http://localhost:8000/oauth/callback/"
-)
+kenar_app= kenar.Client(settings.KENAR_CLIENT_CONFIG)
 
 @api_view(['POST'])
 def register_provider(request):
