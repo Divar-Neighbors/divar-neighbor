@@ -23,5 +23,6 @@ urlpatterns = [
     path('',include('services.urls')),
     path('message/',include('Message.urls')),
     path('', TemplateView.as_view(template_name='home.html'), name='home'),
+    path('help/', TemplateView.as_view(template_name='help.html'), name='help'),
     path('mg/', TemplateView.as_view(template_name='message.html'), name='message'),
 ]
