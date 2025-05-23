@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <title>درخواست خدمات</title>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <style>
+    body {
+      font-family: Tahoma, sans-serif;
+      background-color: #f5f5f5;
+      direction: rtl;
+      padding: 40px;
+    }
+    form {
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      max-width: 500px;
+      margin: auto;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    label {
+      margin-top: 10px;
+      display: block;
+      font-weight: bold;
+    }
+    input, select, button {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      margin-bottom: 15px;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+    }
+    #map {
+      height: 300px;
+      margin-bottom: 10px;
+      border: 1px solid #ccc;
+    }
+  </style>
+</head>
+<body>
+
+<h2 style="text-align:center">ثبت درخواست خدمات</h2>
+
+<form id="serviceForm">
+  <label>نام:</label>
+  <input type="text" name="name" required />
+
+  <label>شماره تماس:</label>
+  <input type="text" name="phone" required />
+
+  <label>دسته خدمات:</label>
+  <select name="category" required>
+    <option value="برق‌کاری">برق‌کاری</option>
+    <option value="لوله‌کشی">لوله‌کشی</option>
+    <option value="تعمیرات سریع">تعمیرات سریع</option>
+    <option value="نظافت">نظافت</option>
+  </select>
+
+  <label>شهر:</label>
+  <input type="text" name="city" required />
+
+  <label>محله:</label>
+  <input type="text" name="district" required />
+
+  <label>مکان روی نقشه:</label>
+  <div id="map"></div>
+  <input type="hidden" name="lat" id="lat" required />
+  <input type="hidden" name="lng" id="lng" required />
+
+  <button type="submit">ارسال و اتصال</button>
+</form>
+
+<script>
+  // نقشه و انتخاب موقعیت
+  let map = L.map('map').setView([35.7, 51.4], 12);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+  let marker;
+  map.on('click', function(e) {
+    let lat = e.latlng.lat;
+    let lng = e.latlng.lng;
+    document.getElementById('lat').value = lat;
+    document.getElementById('lng').value = lng;
+    if (marker) map.removeLayer(marker);
+    marker = L.marker([lat, lng]).addTo(map);
+  });
+
+  // ارسال اطلاعات به view جنگو
+  document.getElementById('serviceForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+
+    let form = e.target;
+    let data = new FormData(form);
+    let json = {};
+    data.forEach((v, k) => json[k] = v);
+
+    fetch('http://localhost:8000/api/request-service/', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(json)
+    }).then(res => {
+      if (res.redirected) {
+        window.location.href = res.url;  // ریدایرکت به OAuth
+      } else {
+        res.json().then(data => alert(data.message || 'خطایی رخ داده'));
+      }
+    }).catch(err => {
+      alert('خطا در ارسال اطلاعات: ' + err);
+    });
+  });
+</script>
+
+</body>
+</html>
