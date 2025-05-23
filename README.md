@@ -46,7 +46,7 @@ This tool aims to speed up and localize service-based connections on the Divar p
 ## 🎥 Demo (PDF,GIF)
 
 Here’s a visual preview of how Divar Neighbors works:
-📄 [View Full PDF DEMO](assets/kenardivar-project.pdf)
+[📄 View Project PDF](assets/kenardivar-project.pdf)
 
 ![Demo GIF](assets/kenar-divar.gif)
 
